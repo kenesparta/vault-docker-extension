@@ -30,6 +30,7 @@ LABEL org.opencontainers.image.title="vault-docker" \
     com.docker.extension.changelog=""
 
 COPY --from=builder /backend/service /
+COPY --from=builder /backend/vars.tmpl /vars.tmpl
 COPY docker-compose.yaml .
 COPY metadata.json .
 COPY rust-vault.png .

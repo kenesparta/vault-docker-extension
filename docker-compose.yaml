@@ -1,3 +1,7 @@
 services:
   vault-docker:
     image: ${DESKTOP_PLUGIN_IMAGE}
+    volumes:
+      - shared_vault:/vault
+volumes:
+  shared_vault:
