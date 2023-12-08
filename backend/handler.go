@@ -18,10 +18,27 @@ type Data struct {
 	Place string
 }
 
+type VaultDto struct {
+	Unlock string `json:"unlock"`
+	Url    string `json:"url"`
+}
+
 func vault(ctx echo.Context) error {
-	t, err := template.ParseFiles("./vars.tmpl")
-	if err != nil {
-		log.Fatal(err)
+	t, tmpErr := template.ParseFiles("./vars.tmpl")
+	if tmpErr != nil {
+		log.Println(tmpErr)
+		return tmpErr
+	}
+
+	var vd VaultDto
+	if bindErr := ctx.Bind(&vd); bindErr != nil {
+		log.Println(bindErr)
+		return bindErr
+	}
+
+	if unlockErr := Unlock(vd.Unlock, vd.Url); unlockErr != nil {
+		log.Println(unlockErr)
+		return unlockErr
 	}
 
 	data := Data{
@@ -31,13 +48,14 @@ func vault(ctx echo.Context) error {
 
 	file, err := os.Create("/vault/vars.sh")
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
+		return err
 	}
 	defer file.Close()
 
-	err = t.Execute(file, data)
-	if err != nil {
-		log.Fatal(err)
+	if parseErr := t.Execute(file, data); parseErr != nil {
+		log.Println(parseErr)
+		return parseErr
 	}
 
 	return ctx.JSON(http.StatusOK, HTTPMessageBody{Message: "vault set"})
