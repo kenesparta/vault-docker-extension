@@ -22,7 +22,7 @@ LABEL org.opencontainers.image.title="vault-docker" \
     org.opencontainers.image.vendor="Ken" \
     com.docker.desktop.extension.api.version="0.3.4" \
     com.docker.extension.screenshots="" \
-    com.docker.desktop.extension.icon="" \
+    com.docker.desktop.extension.icon="padlock-icon.svg" \
     com.docker.extension.detailed-description="" \
     com.docker.extension.publisher-url="" \
     com.docker.extension.additional-urls="" \
@@ -33,6 +33,6 @@ COPY --from=builder /backend/service /
 COPY --from=builder /backend/vars.tmpl /vars.tmpl
 COPY docker-compose.yaml .
 COPY metadata.json .
-COPY rust-vault.png .
+COPY padlock-icon.svg .
 COPY --from=client-builder /ui/build ui
 CMD /service -socket /run/guest-services/backend.sock

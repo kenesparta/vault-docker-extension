@@ -1,10 +1,8 @@
 import React from 'react';
 import Button from '@mui/material/Button';
 import {createDockerDesktopClient} from '@docker/extension-api-client';
-import {Divider, Grid, Stack, TextField, Typography} from '@mui/material';
+import {Divider, Grid, TextField, Typography} from '@mui/material';
 
-// Note: This line relies on Docker Desktop's presence as a host application.
-// If you're running this React app in a browser, it won't work properly.
 const client = createDockerDesktopClient();
 
 function useDockerDesktopClient() {
@@ -19,14 +17,17 @@ export function App() {
     const ddClient = useDockerDesktopClient();
 
     const fetchAndDisplayResponse = async () => {
-        const result = await ddClient.extension.vm?.service?.post('/vault', {
-            "unlock": unlockPass,
-            "url": vaultServer,
-            "folder_id": folderID,
-        });
-        setResponse(JSON.stringify(result));
+        try {
+            const result = await ddClient.extension.vm?.service?.post('/vault', {
+                "unlock": unlockPass,
+                "url": vaultServer,
+                "folder_id": folderID,
+            });
+            setResponse(JSON.stringify(result));
+        } catch ({message}) {
+            setResponse(JSON.parse(JSON.stringify(message)));
+        }
     };
-
     return (
         <>
             <Typography variant="h3">Bitwarden Vault Extension</Typography>

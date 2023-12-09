@@ -42,7 +42,7 @@ func Unlock(password, url string) error {
 
 	log.Println("Response:", string(body))
 	if resp.StatusCode != 200 {
-		return errors.New("request error")
+		return errors.New("request error: " + string(body))
 	}
 
 	return nil
