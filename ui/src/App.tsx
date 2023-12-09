@@ -14,13 +14,15 @@ function useDockerDesktopClient() {
 export function App() {
     const [response, setResponse] = React.useState<string>();
     const [unlockPass, setUnlockPass] = React.useState<string>();
-    const [vaultServer, setVaultServer] = React.useState<string>("http://localhost:8080");
+    const [vaultServer, setVaultServer] = React.useState<string>("http://host.docker.internal:8080");
+    const [folderID, setFolderID] = React.useState<string>();
     const ddClient = useDockerDesktopClient();
 
     const fetchAndDisplayResponse = async () => {
         const result = await ddClient.extension.vm?.service?.post('/vault', {
             "unlock": unlockPass,
             "url": vaultServer,
+            "folder_id": folderID,
         });
         setResponse(JSON.stringify(result));
     };
@@ -40,7 +42,7 @@ export function App() {
             </Typography>
             <Divider/>
             <Grid container spacing={2}>
-                <Grid item xs={6}>
+                <Grid item xs={4}>
                     <TextField
                         fullWidth
                         id="password"
@@ -54,7 +56,21 @@ export function App() {
                         }}
                     />
                 </Grid>
-                <Grid item xs={4}>
+                <Grid item xs={3}>
+                    <TextField
+                        fullWidth
+                        id="folderID"
+                        label="Folder ID"
+                        variant="outlined"
+                        type="text"
+                        defaultValue={folderID}
+                        value={folderID}
+                        onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                            setFolderID(event.target.value);
+                        }}
+                    />
+                </Grid>
+                <Grid item xs={3}>
                     <TextField
                         fullWidth
                         id="password"

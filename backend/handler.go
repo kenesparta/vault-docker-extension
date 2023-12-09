@@ -19,8 +19,9 @@ type Data struct {
 }
 
 type VaultDto struct {
-	Unlock string `json:"unlock"`
-	Url    string `json:"url"`
+	Unlock   string `json:"unlock"`
+	Url      string `json:"url"`
+	FolderID string `json:"folder_id"`
 }
 
 func vault(ctx echo.Context) error {
@@ -41,19 +42,19 @@ func vault(ctx echo.Context) error {
 		return unlockErr
 	}
 
-	data := Data{
-		Name:  "Alice",
-		Place: "Wonderland",
+	items, err := GetItems(vd.Url)
+	if err != nil {
+		return err
 	}
 
-	file, err := os.Create("/vault/vars.sh")
+	file, err := os.Create("/vault/vault.env")
 	if err != nil {
 		log.Println(err)
 		return err
 	}
 	defer file.Close()
 
-	if parseErr := t.Execute(file, data); parseErr != nil {
+	if parseErr := t.Execute(file, GenerateFields(vd.FolderID, items)); parseErr != nil {
 		log.Println(parseErr)
 		return parseErr
 	}
